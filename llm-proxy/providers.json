@@ -1,0 +1,15 @@
+{
+  "anthropic": {
+    "baseUrl": "https://api.anthropic.com",
+    "defaultHeaders": {
+      "anthropic-version": "2023-06-01"
+    }
+  },
+  "openai": {
+    "baseUrl": "https://api.openai.com/v1"
+  },
+  "zai": {
+    "baseUrl": "https://api.z.ai/api/anthropic",
+    "authToken": "xxx"
+  }
+}
