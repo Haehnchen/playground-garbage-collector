@@ -1,0 +1,26 @@
+{
+  "name": "ai-trading-bot",
+  "version": "1.0.0",
+  "description": "AI-powered trading bot using AI SDK with Bybit BTC data",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ai-sdk/openai": "^3.0.26",
+    "ai": "^6.0.78",
+    "axios": "^1.13.5",
+    "dotenv": "^17.2.4",
+    "talib": "^2.0.3",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
