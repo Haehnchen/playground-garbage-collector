@@ -4,6 +4,14 @@ A collection of experimental projects and technical concept explorations.
 
 ---
 
+## Intellij / PhpStorm php plugin cost-aware caching
+
+*Created: 2026-03-01*
+
+Deep dive into JetBrains PHP plugin's cost-aware caching mechanism that automatically evicts entries based on computation cost and memory pressure.
+
+**→ [Read more](./jetbrains-intellij/docs/php-plugin-cost-adaptive-cache.md)**
+
 ## LLM Proxy
 
 *Created: 2026-02-10*
