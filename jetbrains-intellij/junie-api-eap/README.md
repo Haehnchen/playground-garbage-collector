@@ -160,6 +160,8 @@ curl --fail-with-body --silent --show-error \
 
 Merge the provider below into `~/.config/opencode/opencode.jsonc` and replace `YOUR_JUNIE_EAP_TOKEN`.
 
+Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Google use provider-specific key headers instead of the required `Authorization: Bearer` header. Without a plugin, the token must therefore be configured directly in `Authorization`.
+
 `apiKey` is a fixed SDK initialization value. Authentication uses the `Authorization` header.
 
 ```jsonc
