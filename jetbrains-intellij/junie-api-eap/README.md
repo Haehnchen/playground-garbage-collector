@@ -4,6 +4,15 @@
 
 Junie Nightly uses dedicated EAP test tokens with the JetBrains EAP LLM gateway. The gateway can be called directly with Curl or configured as an OpenCode provider without starting the Junie CLI.
 
+## Updating Nightly models
+
+Copy new models from the `junie --nightly` selector and test them with the matching Curl request. Inspect the JAR only for new providers or changed APIs:
+
+```bash
+JAR=$(find ~/.local/share/junie/versions -path '*/junie-app/lib/app/junie-nightly-*.jar' -print | sort -V | tail -n 1)
+javap -classpath "$JAR" -c -p com.intellij.ml.llm.matterhorn.core.llm.ingrazzio.IngrazzioLLMAccessKt
+```
+
 ## Gateway
 
 ```text
