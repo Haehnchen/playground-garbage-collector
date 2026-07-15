@@ -4,6 +4,15 @@ A collection of experimental projects and technical concept explorations.
 
 ---
 
+## JetBrains Junie EAP API in OpenCode
+
+*Created: 2026-07-15*
+
+Direct Curl and OpenCode integration for the Junie Nightly/EAP gateway,
+including its native OpenAI, Anthropic, Gemini, Grok, and Qwen request formats.
+
+**→ [Read more](./jetbrains-intellij/junie-api-eap/README.md)**
+
 ## ClinePass in OpenCode
 
 *Created: 2026-07-11*
