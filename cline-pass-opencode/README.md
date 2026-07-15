@@ -220,29 +220,6 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           }
         }
       }
-    },
-    "junie-nightly": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "Junie Nightly (EAP)",
-      "options": {
-        "baseURL": "https://ingrazzio-cloud-prod.labs.jb.gg/v1",
-        "headers": {
-          "X-LLM-Model": "openai",
-          "X-Keep-Path": "true",
-          "X-Accept-EAP-License": "true",
-          "X-Accept-Release-License": "false",
-          "Accept-Encoding": "identity"
-        }
-      },
-      "models": {
-        "gpt-5.6-luna": {
-          "name": "GPT-5.6 Luna (Junie Nightly)",
-          "family": "gpt",
-          "reasoning": true,
-          "temperature": false,
-          "tool_call": true
-        }
-      }
     }
   }
 }
