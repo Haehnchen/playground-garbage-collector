@@ -6,7 +6,7 @@ Junie Nightly uses dedicated EAP test tokens with the JetBrains EAP LLM gateway.
 
 ## Updating Nightly models
 
-Copy new models from the `junie --nightly` selector and test them with the matching Curl request. Inspect the JAR only for new providers or changed APIs:
+Run `junie --nightly --model foobar`; the expected failure lists all valid Nightly model IDs. Test new IDs with the matching Curl request and inspect the JAR only for new providers or changed APIs:
 
 ```bash
 JAR=$(find ~/.local/share/junie/versions -path '*/junie-app/lib/app/junie-nightly-*.jar' -print | sort -V | tail -n 1)
