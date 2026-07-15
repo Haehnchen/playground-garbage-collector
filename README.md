@@ -4,6 +4,14 @@ A collection of experimental projects and technical concept explorations.
 
 ---
 
+## ClinePass in OpenCode
+
+*Created: 2026-07-11*
+
+An OpenCode provider configuration for ClinePass and a source-level trace of where its API endpoint, model list, and model metadata come from.
+
+**→ [Read more](./cline-pass-opencode/README.md)**
+
 ## Intellij / PhpStorm php plugin cost-aware caching
 
 *Created: 2026-03-01*
