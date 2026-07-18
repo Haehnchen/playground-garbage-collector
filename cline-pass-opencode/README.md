@@ -4,6 +4,8 @@
 
 This is a dated snapshot of `~/.config/opencode/opencode.jsonc`. It exposes ClinePass to OpenCode as an OpenAI-compatible provider.
 
+Only models shown as `Subscribed` are mirrored. The separately limited models remain available in Cline's model picker under `Free` and are intentionally excluded here.
+
 ## Where the models come from
 
 OpenCode does not include ClinePass or its models. The provider and model definitions used by this configuration come from the Cline CLI source:
@@ -40,6 +42,26 @@ OpenCode does not include ClinePass or its models. The provider and model defini
             "input": 0.9086,
             "output": 2.8556,
             "cache_read": 0.16874,
+            "cache_write": 0
+          }
+        },
+        "cline-pass/kimi-k3": {
+          "name": "Kimi K3",
+          "family": "kimi-k3",
+          "release_date": "2026-07-16",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": {
+            "context": 1048576,
+            "input": 1048576,
+            "output": 131072
+          },
+          "cost": {
+            "input": 3,
+            "output": 15,
+            "cache_read": 0.3,
             "cache_write": 0
           }
         },

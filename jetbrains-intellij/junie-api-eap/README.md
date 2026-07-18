@@ -125,7 +125,7 @@ curl --fail-with-body --silent --show-error \
   -H 'X-Accept-EAP-License: true' \
   -H 'X-Accept-Release-License: false' \
   --data-binary '{
-    "model": "grok-4.3",
+    "model": "grok-4.5",
     "input": "Reply with exactly: Hello",
     "stream": false
   }'
@@ -491,6 +491,27 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
             "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
           }
         },
+        "grok-4.5": {
+          "name": "Grok 4.5",
+          "family": "grok",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "cost": {
+            "input": 2,
+            "output": 6,
+            "cache_read": 0.5,
+            "cache_write": 0
+          },
+          "headers": {
+            "X-LLM-Model": "grok"
+          },
+          "provider": {
+            "npm": "@ai-sdk/openai",
+            "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
+          }
+        },
         "hetzner/Qwen/Qwen3.6-27B-FP8": {
           "name": "Qwen Flash",
           "family": "qwen",
@@ -525,4 +546,5 @@ opencode models jetbrains-junie-eap
 
 opencode run --pure --model jetbrains-junie-eap/gpt-5.6-luna 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/claude-opus-4-8 'Reply with exactly: Hello'
+opencode run --pure --model jetbrains-junie-eap/grok-4.5 'Reply with exactly: Hello'
 ```
