@@ -4,6 +4,16 @@ A collection of experimental projects and technical concept explorations.
 
 ---
 
+## JetBrains Context CLI Architecture and Privacy
+
+*Created: 2026-07-21*
+
+Technical analysis of the JetBrains Context CLI, including installer behavior,
+incremental semantic indexing, cloud and local storage boundaries, MCP and agent
+integration, and source-code data flow.
+
+**→ [Read more](./jetbrains-intellij/context-cli/README.md)**
+
 ## JetBrains Junie EAP API in OpenCode
 
 *Created: 2026-07-15*
