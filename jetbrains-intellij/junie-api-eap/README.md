@@ -6,7 +6,7 @@ Junie Nightly uses dedicated EAP test tokens with the JetBrains EAP LLM gateway.
 
 ## Updating Nightly models
 
-Run `junie --nightly --model foobar`; the expected failure lists all valid Nightly model IDs. Test new IDs with the matching Curl request and inspect the JAR only for new providers or changed APIs:
+Run `junie --channel=nightly --model test`; the expected failure lists all valid Nightly model IDs. Test new IDs with the matching Curl request and inspect the JAR only for new providers or changed APIs:
 
 ```bash
 JAR=$(find ~/.local/share/junie/versions -path '*/junie-app/lib/app/junie-nightly-*.jar' -print | sort -V | tail -n 1)
@@ -90,7 +90,7 @@ curl --fail-with-body --silent --show-error \
 
 ```bash
 curl --fail-with-body --silent --show-error \
-  'https://ingrazzio-cloud-prod.labs.jb.gg/v1beta1/projects/jetbrains-grazie/locations/global/publishers/google/models/gemini-3-flash-preview:generateContent' \
+  'https://ingrazzio-cloud-prod.labs.jb.gg/v1beta1/projects/jetbrains-grazie/locations/global/publishers/google/models/gemini-3.6-flash:generateContent' \
   -H 'Authorization: Bearer YOUR_JUNIE_EAP_TOKEN' \
   -H 'Content-Type: application/json' \
   -H 'Accept-Encoding: identity' \
@@ -238,8 +238,28 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
             "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1beta1/projects/jetbrains-grazie/locations/global/publishers/google"
           }
         },
-        "gemini-3.5-flash": {
-          "name": "Gemini 3.5 Flash",
+        "gemini-3.5-flash-lite": {
+          "name": "Gemini 3.5 Flash Lite",
+          "family": "gemini",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "cost": {
+            "input": 0.25,
+            "output": 1.5,
+            "cache_read": 0.025
+          },
+          "headers": {
+            "X-LLM-Model": "google"
+          },
+          "provider": {
+            "npm": "@ai-sdk/google",
+            "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1beta1/projects/jetbrains-grazie/locations/global/publishers/google"
+          }
+        },
+        "gemini-3.6-flash": {
+          "name": "Gemini 3.6 Flash",
           "family": "gemini",
           "attachment": true,
           "reasoning": true,
@@ -247,7 +267,8 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
           "tool_call": true,
           "cost": {
             "input": 1.5,
-            "output": 9
+            "output": 7.5,
+            "cache_read": 0.15
           },
           "headers": {
             "X-LLM-Model": "google"
@@ -546,5 +567,7 @@ opencode models jetbrains-junie-eap
 
 opencode run --pure --model jetbrains-junie-eap/gpt-5.6-luna 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/claude-opus-4-8 'Reply with exactly: Hello'
+opencode run --pure --model jetbrains-junie-eap/gemini-3.5-flash-lite 'Reply with exactly: Hello'
+opencode run --pure --model jetbrains-junie-eap/gemini-3.6-flash 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/grok-4.5 'Reply with exactly: Hello'
 ```
