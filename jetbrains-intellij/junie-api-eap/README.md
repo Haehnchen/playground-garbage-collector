@@ -1,6 +1,6 @@
 # JetBrains Junie EAP API
 
-*Created: 2026-07-15*
+*Created: 2026-07-15 (Updated: 2026-07-25)*
 
 Junie Nightly uses dedicated EAP test tokens with the JetBrains EAP LLM gateway. The gateway can be called directly with Curl or configured as an OpenCode provider without starting the Junie CLI.
 
@@ -334,6 +334,24 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
         },
         "claude-opus-4-8": {
           "name": "Claude Opus 4.8",
+          "family": "claude-opus",
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "cost": {
+            "input": 5,
+            "output": 25
+          },
+          "headers": {
+            "X-LLM-Model": "anthropic"
+          },
+          "provider": {
+            "npm": "@ai-sdk/anthropic",
+            "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
+          }
+        },
+        "claude-opus-5": {
+          "name": "Claude Opus 5",
           "family": "claude-opus",
           "reasoning": true,
           "temperature": true,

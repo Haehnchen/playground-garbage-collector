@@ -16,7 +16,7 @@ integration, and source-code data flow.
 
 ## JetBrains Junie EAP API in OpenCode
 
-*Created: 2026-07-15*
+*Created: 2026-07-15 (Updated: 2026-07-25)*
 
 Direct Curl and OpenCode integration for the Junie Nightly/EAP gateway,
 including its native OpenAI, Anthropic, Gemini, Grok, and Qwen request formats.
