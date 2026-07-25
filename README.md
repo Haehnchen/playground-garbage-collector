@@ -4,6 +4,14 @@ A collection of experimental projects and technical concept explorations.
 
 ---
 
+## JetBrains Junie Usage API
+
+*Created: 2026-07-25*
+
+API endpoint, curl example, and field reference for the JetBrains Junie usage/balance endpoint.
+
+**→ [Read more](./jetbrains-intellij/docs/usage-provider-api.md)**
+
 ## JetBrains Context CLI Architecture and Privacy
 
 *Created: 2026-07-21*
