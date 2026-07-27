@@ -1,8 +1,8 @@
-# JetBrains Junie EAP API
+# JetBrains Junie LLM Gateway
 
-*Created: 2026-07-15 (Updated: 2026-07-25)*
+*Created: 2026-07-15 (Updated: 2026-07-27)*
 
-Junie Nightly uses dedicated EAP test tokens with the JetBrains EAP LLM gateway. The gateway can be called directly with Curl or configured as an OpenCode provider without starting the Junie CLI.
+The JetBrains Junie gateway (`ingrazzio-cloud-prod.labs.jb.gg`) serves LLM requests for Junie and the JetBrains AI Assistant. It supports two licensing modes controlled by request headers — **EAP** (free test tokens) and **Pro** (paid AI Assistant credits). The gateway can be called directly with Curl or configured as an OpenCode provider without starting the Junie CLI.
 
 ## Updating Nightly models
 
@@ -11,6 +11,29 @@ Run `junie --channel=nightly --model test`; the expected failure lists all valid
 ```bash
 JAR=$(find ~/.local/share/junie/versions -path '*/junie-app/lib/app/junie-nightly-*.jar' -print | sort -V | tail -n 1)
 javap -classpath "$JAR" -c -p com.intellij.ml.llm.matterhorn.core.llm.ingrazzio.IngrazzioLLMAccessKt
+```
+
+## Licensing Modes
+
+The gateway supports two modes, selected by the `X-Accept-EAP-License` and `X-Accept-Release-License` headers:
+
+| Mode | `X-Accept-EAP-License` | `X-Accept-Release-License` | Token source | Billing |
+|---|---|---|---|---|
+| **EAP** | `true` | `false` | Junie Nightly / EAP test token | Free (EAP program) |
+| **Pro** | *(omit)* | `true` | JetBrains AI Assistant token | AI credits (paid) |
+
+**EAP mode** — launched via `junie --channel=nightly`. Uses a Junie Nightly/EAP token, free credits.
+**Pro mode** — standard `junie` (no `--channel` flag), production mode. Requires a JetBrains AI Assistant Pro subscription.
+
+### Quick diff
+
+```text
+ EAP                          Pro
+────────────────────────────  ────────────────────────────
+Authorization: Bearer <EAP>  Authorization: Bearer <AI-Assistant>
+X-Accept-EAP-License: true   (omit or false)
+X-Accept-Release-License:     X-Accept-Release-License:
+  false                         true
 ```
 
 ## Gateway
@@ -29,7 +52,7 @@ Successful EAP responses include `x-response-origin: EAP_INGRAZZIO`.
 | Grok | `/v1/responses` | OpenAI Responses | `grok` |
 | Qwen Flash | `/v1/chat/completions` | OpenAI Chat Completions | `internal-lite-llm` |
 
-Required common headers:
+Required common headers (EAP mode shown, see [Licensing Modes](#licensing-modes) for Pro):
 
 ```text
 Authorization: Bearer <token>
@@ -155,6 +178,39 @@ curl --fail-with-body --silent --show-error \
     "stream": false
   }'
 ```
+
+### Pro mode (AI credits)
+
+To use a JetBrains AI Assistant Pro subscription instead of EAP, change only the auth header and the two license headers. All other headers, the endpoint, and the body stay identical:
+
+```bash
+curl --fail-with-body --silent --show-error \
+  'https://ingrazzio-cloud-prod.labs.jb.gg/v1/responses' \
+  -H 'Authorization: Bearer YOUR_JETBRAINS_AI_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept-Encoding: identity' \
+  -H 'X-LLM-Model: openai' \
+  -H 'X-Keep-Path: true' \
+  -H 'X-Accept-Release-License: true' \
+  --data-binary '{
+    "model": "gpt-5.6-luna",
+    "input": "Reply with exactly: Hello",
+    "stream": false
+  }'
+```
+
+Key differences from EAP:
+
+```diff
+-  -H 'Authorization: Bearer YOUR_JUNIE_EAP_TOKEN' \
++  -H 'Authorization: Bearer YOUR_JETBRAINS_AI_TOKEN' \
+   ...
+-  -H 'X-Accept-EAP-License: true' \
+-  -H 'X-Accept-Release-License: false' \
++  -H 'X-Accept-Release-License: true' \
+```
+
+The same substitution applies to every curl example above — swap the token, drop `X-Accept-EAP-License`, flip `X-Accept-Release-License` to `true`.
 
 ## OpenCode
 
@@ -588,4 +644,31 @@ opencode run --pure --model jetbrains-junie-eap/claude-opus-4-8 'Reply with exac
 opencode run --pure --model jetbrains-junie-eap/gemini-3.5-flash-lite 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/gemini-3.6-flash 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/grok-4.5 'Reply with exactly: Hello'
+```
+
+### OpenCode Pro mode
+
+For JetBrains AI Assistant Pro, copy the provider above and change only the headers block — rename the provider key if you want to keep both side by side:
+
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "jetbrains-junie-pro": {
+      "name": "Junie Pro",
+      "options": {
+        "apiKey": "unused-by-junie-gateway",
+        "headers": {
+          "Authorization": "Bearer YOUR_JETBRAINS_AI_TOKEN",
+          "X-Keep-Path": "true",
+          "X-Accept-Release-License": "true",
+          "Accept-Encoding": "identity"
+        }
+      },
+      "models": {
+        // ... same model definitions as above, no changes needed
+      }
+    }
+  }
+}
 ```
