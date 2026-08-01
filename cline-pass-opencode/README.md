@@ -56,7 +56,7 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "limit": {
             "context": 1048576,
             "input": 1048576,
-            "output": 131072
+            "output": 1048576
           },
           "cost": {
             "input": 3,
@@ -76,7 +76,7 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "limit": {
             "context": 262144,
             "input": 262144,
-            "output": 16384
+            "output": 262144
           },
           "cost": {
             "input": 0.74,
@@ -99,8 +99,8 @@ OpenCode does not include ClinePass or its models. The provider and model defini
             "output": 262144
           },
           "cost": {
-            "input": 0.66,
-            "output": 3.41,
+            "input": 0.646,
+            "output": 2.72,
             "cache_read": 0.14,
             "cache_write": 0
           }
@@ -134,11 +134,11 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "limit": {
             "context": 1048576,
             "input": 1048576,
-            "output": 16384
+            "output": 393216
           },
           "cost": {
-            "input": 0.09,
-            "output": 0.18,
+            "input": 0.14,
+            "output": 0.28,
             "cache_read": 0.018,
             "cache_write": 0
           }
@@ -152,8 +152,8 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "temperature": true,
           "tool_call": true,
           "limit": {
-            "context": 32000,
-            "input": 32000,
+            "context": 1050000,
+            "input": 1050000,
             "output": 131072
           },
           "cost": {
@@ -171,8 +171,8 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "temperature": true,
           "tool_call": true,
           "limit": {
-            "context": 1048576,
-            "input": 1048576,
+            "context": 1050000,
+            "input": 1050000,
             "output": 131072
           },
           "cost": {
