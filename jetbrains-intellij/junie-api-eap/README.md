@@ -1,6 +1,6 @@
 # JetBrains Junie LLM Gateway
 
-*Created: 2026-07-15 (Updated: 2026-07-27)*
+*Created: 2026-07-15 (Updated: 2026-08-01)*
 
 The JetBrains Junie gateway (`ingrazzio-cloud-prod.labs.jb.gg`) serves LLM requests for Junie and the JetBrains AI Assistant. It supports two licensing modes controlled by request headers — **EAP** (free test tokens) and **Pro** (paid AI Assistant credits). The gateway can be called directly with Curl or configured as an OpenCode provider without starting the Junie CLI.
 
@@ -622,6 +622,25 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
           },
           "interleaved": {
             "field": "reasoning_content"
+          },
+          "provider": {
+            "npm": "@ai-sdk/openai-compatible",
+            "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
+          }
+        },
+        "deepseek-v4-flash": {
+          "name": "DeepSeek V4 Flash",
+          "family": "deepseek",
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "cost": {
+            "input": 0.2,
+            "output": 0.4,
+            "cache_read": 0.04
+          },
+          "headers": {
+            "X-LLM-Model": "alicloud"
           },
           "provider": {
             "npm": "@ai-sdk/openai-compatible",
