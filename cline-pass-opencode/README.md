@@ -1,10 +1,10 @@
 # ClinePass in OpenCode
 
-*Created: 2026-07-11*
+*Created: 2026-07-11 (Updated: 2026-08-02)*
 
 This is a dated snapshot of `~/.config/opencode/opencode.jsonc`. It exposes ClinePass to OpenCode as an OpenAI-compatible provider.
 
-Only models shown as `Subscribed` are mirrored. The separately limited models remain available in Cline's model picker under `Free` and are intentionally excluded here.
+Only models shown as `Subscribed` are mirrored. The separately limited models remain available in Cline's model picker under `Free` and are mirrored here as well.
 
 ## Where the models come from
 
@@ -239,6 +239,63 @@ OpenCode does not include ClinePass or its models. The provider and model defini
             "output": 1.28,
             "cache_read": 0.064,
             "cache_write": 0.4
+          }
+        },
+        "poolside/laguna-s-2.1:free": {
+          "name": "Laguna-S-2.1 (Free)",
+          "family": "laguna-s",
+          "release_date": "2026-07-21",
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": {
+            "context": 262144,
+            "input": 262144,
+            "output": 32768
+          },
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cache_read": 0,
+            "cache_write": 0
+          }
+        },
+        "deepseek/deepseek-v4-flash": {
+          "name": "DeepSeek V4 Flash (Free)",
+          "family": "deepseek-flash",
+          "release_date": "2026-04-24",
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": {
+            "context": 1048576,
+            "input": 1048576,
+            "output": 393216
+          },
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cache_read": 0,
+            "cache_write": 0
+          }
+        },
+        "stepfun/step-3.7-flash": {
+          "name": "Step-3.7 Flash (Free)",
+          "release_date": "2026-05-29",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": {
+            "context": 262144,
+            "input": 256000,
+            "output": 256000
+          },
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cache_read": 0,
+            "cache_write": 0
           }
         }
       }
