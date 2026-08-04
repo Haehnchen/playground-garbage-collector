@@ -1,6 +1,6 @@
 # ClinePass in OpenCode
 
-*Created: 2026-07-11 (Updated: 2026-08-02)*
+*Created: 2026-07-11 (Updated: 2026-08-04)*
 
 This is a dated snapshot of `~/.config/opencode/opencode.jsonc`. It exposes ClinePass to OpenCode as an OpenAI-compatible provider.
 
@@ -39,9 +39,9 @@ OpenCode does not include ClinePass or its models. The provider and model defini
             "output": 131072
           },
           "cost": {
-            "input": 0.9086,
-            "output": 2.8556,
-            "cache_read": 0.16874,
+            "input": 0.7378,
+            "output": 2.3188,
+            "cache_read": 0.13702,
             "cache_write": 0
           }
         },
@@ -79,7 +79,7 @@ OpenCode does not include ClinePass or its models. The provider and model defini
             "output": 262144
           },
           "cost": {
-            "input": 0.74,
+            "input": 0.73,
             "output": 3.5,
             "cache_read": 0.15,
             "cache_write": 0
@@ -157,9 +157,9 @@ OpenCode does not include ClinePass or its models. The provider and model defini
             "output": 131072
           },
           "cost": {
-            "input": 0.105,
+            "input": 0.14,
             "output": 0.28,
-            "cache_read": 0.028,
+            "cache_read": 0.0028,
             "cache_write": 0
           }
         },
@@ -215,10 +215,10 @@ OpenCode does not include ClinePass or its models. The provider and model defini
             "output": 65536
           },
           "cost": {
-            "input": 1.25,
-            "output": 3.75,
-            "cache_read": 0.25,
-            "cache_write": 1.5625
+            "input": 1.475,
+            "output": 4.425,
+            "cache_read": 0.295,
+            "cache_write": 1.84375
           }
         },
         "cline-pass/qwen3.7-plus": {
