@@ -322,8 +322,8 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
           "temperature": true,
           "tool_call": true,
           "cost": {
-            "input": 1.5,
-            "output": 7.5,
+            "input": 0.75,
+            "output": 3.75,
             "cache_read": 0.15
           },
           "headers": {
@@ -521,8 +521,8 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
           "temperature": false,
           "tool_call": true,
           "cost": {
-            "input": 1,
-            "output": 6
+            "input": 0.20,
+            "output": 1.20
           },
           "headers": {
             "X-LLM-Model": "openai"
@@ -557,8 +557,8 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
           "temperature": false,
           "tool_call": true,
           "cost": {
-            "input": 2.5,
-            "output": 15
+            "input": 2.00,
+            "output": 12.00
           },
           "headers": {
             "X-LLM-Model": "openai"
