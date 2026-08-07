@@ -1,6 +1,6 @@
 # ClinePass in OpenCode
 
-*Created: 2026-07-11 (Updated: 2026-08-04)*
+*Created: 2026-07-11 (Updated: 2026-08-07)*
 
 This is a dated snapshot of `~/.config/opencode/opencode.jsonc`. It exposes ClinePass to OpenCode as an OpenAI-compatible provider.
 
@@ -36,12 +36,12 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "limit": {
             "context": 1048576,
             "input": 1048576,
-            "output": 131072
+            "output": 262144
           },
           "cost": {
-            "input": 0.7378,
-            "output": 2.3188,
-            "cache_read": 0.13702,
+            "input": 0.76,
+            "output": 2.42,
+            "cache_read": 0.14,
             "cache_write": 0
           }
         },
@@ -79,7 +79,7 @@ OpenCode does not include ClinePass or its models. The provider and model defini
             "output": 262144
           },
           "cost": {
-            "input": 0.73,
+            "input": 0.7,
             "output": 3.5,
             "cache_read": 0.15,
             "cache_write": 0
@@ -99,9 +99,9 @@ OpenCode does not include ClinePass or its models. The provider and model defini
             "output": 262144
           },
           "cost": {
-            "input": 0.646,
-            "output": 2.72,
-            "cache_read": 0.14,
+            "input": 0.589,
+            "output": 2.48,
+            "cache_read": 0.0992,
             "cache_write": 0
           }
         },
@@ -134,12 +134,12 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "limit": {
             "context": 1048576,
             "input": 1048576,
-            "output": 393216
+            "output": 131072
           },
           "cost": {
-            "input": 0.14,
-            "output": 0.28,
-            "cache_read": 0.018,
+            "input": 0.0882,
+            "output": 0.1764,
+            "cache_read": 0.01764,
             "cache_write": 0
           }
         },
@@ -191,8 +191,8 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "temperature": true,
           "tool_call": true,
           "limit": {
-            "context": 524288,
-            "input": 524288,
+            "context": 1048576,
+            "input": 1048576,
             "output": 512000
           },
           "cost": {
@@ -212,7 +212,7 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "limit": {
             "context": 1000000,
             "input": 1000000,
-            "output": 65536
+            "output": 131072
           },
           "cost": {
             "input": 1.475,
@@ -232,13 +232,33 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "limit": {
             "context": 1000000,
             "input": 1000000,
-            "output": 65536
+            "output": 131072
           },
           "cost": {
             "input": 0.32,
             "output": 1.28,
             "cache_read": 0.064,
             "cache_write": 0.4
+          }
+        },
+        "cline-pass/qwen3.8-max": {
+          "name": "Qwen3.8 Max",
+          "family": "qwen",
+          "release_date": "2026-08-03",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": {
+            "context": 1000000,
+            "input": 1000000,
+            "output": 131072
+          },
+          "cost": {
+            "input": 2,
+            "output": 6,
+            "cache_read": 0.25,
+            "cache_write": 2.5
           }
         },
         "poolside/laguna-s-2.1:free": {

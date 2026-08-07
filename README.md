@@ -32,7 +32,7 @@ Direct Curl and OpenCode integration for the Junie gateway, covering both EAP (f
 
 ## ClinePass in OpenCode
 
-*Created: 2026-07-11 (Updated: 2026-08-04)*
+*Created: 2026-07-11 (Updated: 2026-08-07)*
 
 An OpenCode provider configuration for ClinePass and a source-level trace of where its API endpoint, model list, and model metadata come from.
 
