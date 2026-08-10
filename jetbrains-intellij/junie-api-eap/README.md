@@ -220,6 +220,8 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
 
 `apiKey` is a fixed SDK initialization value. Authentication uses the `Authorization` header.
 
+**DeepSeek V4 Flash:** add `options.sse_eof_fix: true` to the model configuration and install the global plugin from the [SSE EOF fix section](#deepseek-v4-flash-sse-eof-fix) below. This keeps the existing OpenAI-compatible provider and fixes the Junie stream termination for this model.
+
 ```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
@@ -642,9 +644,12 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
           "headers": {
             "X-LLM-Model": "alicloud"
           },
+          "options": {
+            "sse_eof_fix": true
+          },
           "provider": {
             "npm": "@ai-sdk/openai-compatible",
-            "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
+            "api": "https://ingrazzio-cloud-prod.labs.jb.gg/compatible-mode/v1"
           }
         }
       }
@@ -663,6 +668,123 @@ opencode run --pure --model jetbrains-junie-eap/claude-opus-4-8 'Reply with exac
 opencode run --pure --model jetbrains-junie-eap/gemini-3.5-flash-lite 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/gemini-3.6-flash 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/grok-4.5 'Reply with exactly: Hello'
+```
+
+### DeepSeek V4 Flash SSE EOF fix
+
+Keep the existing `@ai-sdk/openai-compatible` provider. Add the following model option to any model that needs this transport fix:
+
+```jsonc
+"options": {
+  "sse_eof_fix": true
+}
+```
+
+With `options.sse_eof_fix: true`, the global plugin fixes DeepSeek V4 Flash SSE termination after `data: [DONE]` and retries transient `429 Throttling.BurstRate` responses during rapid tool follow-ups.
+
+Install the plugin as `~/.config/opencode/plugins/junie-plain-http.js`:
+
+#### `junie-plain-http.js`
+
+```javascript
+// Opt-in flag for models with a broken SSE connection close.
+const EOF_FIX_FLAG = "sse_eof_fix";
+const RATE_LIMIT_DELAYS = [1000, 2000, 4000];
+
+function wait(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+// Keep all valid SSE data and repair only the final transport error.
+function tolerateEofAfterDone(response) {
+  if (!response.body) return response;
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let seenDone = false;
+  let tail = "";
+  const body = new ReadableStream({
+    async pull(controller) {
+      try {
+        const part = await reader.read();
+        if (part.done) return controller.close();
+
+        // Keep a short tail because [DONE] can span two chunks.
+        const text = tail + decoder.decode(part.value, { stream: true });
+        seenDone ||= text.includes("data: [DONE]");
+        tail = text.slice(-32);
+        controller.enqueue(part.value);
+      } catch (error) {
+        // Errors before [DONE] are real provider errors and must propagate.
+        if (seenDone) controller.close();
+        else controller.error(error);
+      }
+    },
+    cancel(reason) {
+      return reader.cancel(reason);
+    },
+  });
+
+  return new Response(body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: response.headers,
+  });
+}
+
+function createEofFixFetch(modelIds, originalFetch = fetch) {
+  return async function junieFetch(input, init = {}) {
+    if (typeof init.body !== "string") return originalFetch(input, init);
+
+    let request;
+    try {
+      request = JSON.parse(init.body);
+    } catch {
+      return originalFetch(input, init);
+    }
+
+    // Leave every unmarked model and non-streaming request untouched.
+    if (!modelIds.has(request.model) || request.stream !== true) {
+      return originalFetch(input, init);
+    }
+
+    let response = await originalFetch(input, init);
+    // Tool follow-ups can briefly trigger Junie's burst-rate limit.
+    for (const delay of RATE_LIMIT_DELAYS) {
+      if (response.status !== 429) break;
+      await response.body?.cancel();
+      await wait(delay);
+      response = await originalFetch(input, init);
+    }
+    return response.ok ? tolerateEofAfterDone(response) : response;
+  };
+}
+
+export const JuniePlainHttpPlugin = async () => ({
+  async config(config) {
+    for (const provider of Object.values(config.provider ?? {})) {
+      const modelIds = Object.entries(provider?.models ?? {})
+        .filter(([, model]) => model?.options?.[EOF_FIX_FLAG] === true)
+        .map(([modelId]) => modelId);
+      if (!modelIds.length) continue;
+
+      // Preserve another provider-specific fetch wrapper if present.
+      const originalFetch = typeof provider.options?.fetch === "function"
+        ? provider.options.fetch
+        : fetch;
+      provider.options = {
+        ...(provider.options ?? {}),
+        fetch: createEofFixFetch(new Set(modelIds), originalFetch),
+      };
+    }
+  },
+});
+```
+
+Test:
+
+```bash
+opencode run --model jetbrains-junie-eap/deepseek-v4-flash 'Reply with exactly: Hello'
 ```
 
 ### OpenCode Pro mode
