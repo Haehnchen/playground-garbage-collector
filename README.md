@@ -4,6 +4,14 @@ A collection of experimental projects and technical concept explorations.
 
 ---
 
+## Hetzner Inference API in OpenCode
+
+*Created: 2026-08-11*
+
+An OpenCode provider configuration for every model currently exposed by the OpenAI-compatible Hetzner Experiments Inference API.
+
+**→ [Read more](./other/hetzner-inference-opencode/README.md)**
+
 ## JetBrains Junie Usage API
 
 *Created: 2026-07-25*
