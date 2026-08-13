@@ -1,6 +1,6 @@
 # JetBrains Junie LLM Gateway
 
-*Created: 2026-07-15 (Updated: 2026-08-01)*
+*Created: 2026-07-15 (Updated: 2026-08-13)*
 
 The JetBrains Junie gateway (`ingrazzio-cloud-prod.labs.jb.gg`) serves LLM requests for Junie and the JetBrains AI Assistant. It supports two licensing modes controlled by request headers — **EAP** (free test tokens) and **Pro** (paid AI Assistant credits). The gateway can be called directly with Curl or configured as an OpenCode provider without starting the Junie CLI.
 
@@ -609,6 +609,26 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
             "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
           }
         },
+        "grok-4.6": {
+          "name": "Grok 4.6",
+          "family": "grok",
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "cost": {
+            "input": 2,
+            "output": 6,
+            "cache_read": 0.5,
+            "cache_write": 0
+          },
+          "headers": {
+            "X-LLM-Model": "grok"
+          },
+          "provider": {
+            "npm": "@ai-sdk/openai",
+            "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
+          }
+        },
         "hetzner/Qwen/Qwen3.6-27B-FP8": {
           "name": "Qwen Flash",
           "family": "qwen",
@@ -667,7 +687,7 @@ opencode run --pure --model jetbrains-junie-eap/gpt-5.6-luna 'Reply with exactly
 opencode run --pure --model jetbrains-junie-eap/claude-opus-4-8 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/gemini-3.5-flash-lite 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/gemini-3.6-flash 'Reply with exactly: Hello'
-opencode run --pure --model jetbrains-junie-eap/grok-4.5 'Reply with exactly: Hello'
+opencode run --pure --model jetbrains-junie-eap/grok-4.6 'Reply with exactly: Hello'
 ```
 
 ### DeepSeek V4 Flash SSE EOF fix
