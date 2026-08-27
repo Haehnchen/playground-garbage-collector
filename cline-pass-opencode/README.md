@@ -1,6 +1,6 @@
 # ClinePass in OpenCode
 
-*Created: 2026-07-11 (Updated: 2026-08-07)*
+*Created: 2026-07-11 (Updated: 2026-08-27)*
 
 This is a dated snapshot of `~/.config/opencode/opencode.jsonc`. It exposes ClinePass to OpenCode as an OpenAI-compatible provider.
 
@@ -12,6 +12,7 @@ OpenCode does not include ClinePass or its models. The provider and model defini
 
 - [`builtins.ts`](https://github.com/cline/cline/blob/main/sdk/packages/llms/src/providers/builtins.ts) defines ClinePass as an OpenAI-compatible provider using the Cline API.
 - [`catalog.generated.ts`](https://github.com/cline/cline/blob/main/sdk/packages/llms/src/catalog/catalog.generated.ts) contains the ClinePass model definitions mirrored below.
+- [`recommended-models`](https://api.cline.bot/api/v1/ai/cline/recommended-models) is the live source for the current `Subscribed` and `Free` picker entries. It can be newer than the generated catalog.
 
 ## Configuration
 
@@ -39,9 +40,28 @@ OpenCode does not include ClinePass or its models. The provider and model defini
             "output": 262144
           },
           "cost": {
-            "input": 0.76,
-            "output": 2.42,
-            "cache_read": 0.14,
+            "input": 1.19,
+            "output": 3.74,
+            "cache_read": 0.221,
+            "cache_write": 0
+          }
+        },
+        "cline-pass/glm-5.3": {
+          "name": "GLM-5.3",
+          "family": "glm",
+          "release_date": "2026-08-14",
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": {
+            "context": 1048576,
+            "input": 1048576,
+            "output": 131072
+          },
+          "cost": {
+            "input": 1.4,
+            "output": 4.4,
+            "cache_read": 0.26,
             "cache_write": 0
           }
         },
@@ -56,7 +76,7 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "limit": {
             "context": 1048576,
             "input": 1048576,
-            "output": 1048576
+            "output": 943718
           },
           "cost": {
             "input": 3,
@@ -76,12 +96,12 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "limit": {
             "context": 262144,
             "input": 262144,
-            "output": 262144
+            "output": 235929
           },
           "cost": {
-            "input": 0.7,
-            "output": 3.5,
-            "cache_read": 0.15,
+            "input": 0.67,
+            "output": 3.4,
+            "cache_read": 0.19,
             "cache_write": 0
           }
         },
@@ -96,12 +116,12 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "limit": {
             "context": 262144,
             "input": 262144,
-            "output": 262144
+            "output": 235929
           },
           "cost": {
-            "input": 0.589,
-            "output": 2.48,
-            "cache_read": 0.0992,
+            "input": 0.95,
+            "output": 4,
+            "cache_read": 0.16,
             "cache_write": 0
           }
         },
@@ -118,9 +138,9 @@ OpenCode does not include ClinePass or its models. The provider and model defini
             "output": 384000
           },
           "cost": {
-            "input": 0.435,
-            "output": 0.87,
-            "cache_read": 0.003625,
+            "input": 0.87,
+            "output": 1.74,
+            "cache_read": 0.0725,
             "cache_write": 0
           }
         },
@@ -134,12 +154,12 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "limit": {
             "context": 1048576,
             "input": 1048576,
-            "output": 131072
+            "output": 384000
           },
           "cost": {
-            "input": 0.0882,
-            "output": 0.1764,
-            "cache_read": 0.01764,
+            "input": 0.088606,
+            "output": 0.177212,
+            "cache_read": 0.017721,
             "cache_write": 0
           }
         },
@@ -261,6 +281,26 @@ OpenCode does not include ClinePass or its models. The provider and model defini
             "cache_write": 2.5
           }
         },
+        "z-ai/glm-5.3-flash": {
+          "name": "GLM-5.3-Flash (Free)",
+          "family": "glm",
+          "release_date": "2026-08-26",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": {
+            "context": 1310720,
+            "input": 1310720,
+            "output": 131072
+          },
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cache_read": 0,
+            "cache_write": 0
+          }
+        },
         "poolside/laguna-s-2.1:free": {
           "name": "Laguna-S-2.1 (Free)",
           "family": "laguna-s",
@@ -290,26 +330,7 @@ OpenCode does not include ClinePass or its models. The provider and model defini
           "limit": {
             "context": 1048576,
             "input": 1048576,
-            "output": 393216
-          },
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cache_read": 0,
-            "cache_write": 0
-          }
-        },
-        "stepfun/step-3.7-flash": {
-          "name": "Step-3.7 Flash (Free)",
-          "release_date": "2026-05-29",
-          "attachment": true,
-          "reasoning": true,
-          "temperature": true,
-          "tool_call": true,
-          "limit": {
-            "context": 262144,
-            "input": 256000,
-            "output": 256000
+            "output": 384000
           },
           "cost": {
             "input": 0,
