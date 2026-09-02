@@ -1,6 +1,6 @@
 # JetBrains Junie LLM Gateway
 
-*Created: 2026-07-15 (Updated: 2026-08-14)*
+*Created: 2026-07-15 (Updated: 2026-09-02)*
 
 The JetBrains Junie gateway (`ingrazzio-cloud-prod.labs.jb.gg`) serves LLM requests for Junie and the JetBrains AI Assistant. It supports two licensing modes controlled by request headers — **EAP** (free test tokens) and **Pro** (paid AI Assistant credits). The gateway can be called directly with Curl or configured as an OpenCode provider without starting the Junie CLI.
 
@@ -51,6 +51,7 @@ Successful EAP responses include `x-response-origin: EAP_INGRAZZIO`.
 | Gemini | `/v1beta1/projects/jetbrains-grazie/locations/global/publishers/google/models/{model}:generateContent` | Gemini GenerateContent | `google` |
 | Grok | `/v1/responses` | OpenAI Responses | `grok` |
 | Qwen Flash | `/v1/chat/completions` | OpenAI Chat Completions | `internal-lite-llm` |
+| JetBrains Mix | `/llm/vllm/v1/chat/completions` | OpenAI Chat Completions | `jbai` |
 
 Required common headers (EAP mode shown, see [Licensing Modes](#licensing-modes) for Pro):
 
@@ -392,6 +393,24 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
             "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
           }
         },
+        "claude-fable-5-1": {
+          "name": "Claude Fable 5.1",
+          "family": "claude-fable",
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "cost": {
+            "input": 10,
+            "output": 50
+          },
+          "headers": {
+            "X-LLM-Model": "anthropic"
+          },
+          "provider": {
+            "npm": "@ai-sdk/anthropic",
+            "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
+          }
+        },
         "claude-opus-4-6": {
           "name": "Claude Opus 4.6",
           "family": "claude-opus",
@@ -688,6 +707,23 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
             "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
           }
         },
+        "jetbrains-mix": {
+          "name": "JetBrains Mix",
+          "family": "jetbrains",
+          "temperature": true,
+          "tool_call": true,
+          "cost": {
+            "input": 0.15,
+            "output": 0.9
+          },
+          "headers": {
+            "X-LLM-Model": "jbai"
+          },
+          "provider": {
+            "npm": "@ai-sdk/openai-compatible",
+            "api": "https://ingrazzio-cloud-prod.labs.jb.gg/llm/vllm/v1"
+          }
+        },
         "deepseek-v4-flash": {
           "name": "DeepSeek V4 Flash",
           "family": "deepseek",
@@ -722,12 +758,14 @@ List and test:
 opencode models jetbrains-junie-eap
 
 opencode run --pure --model jetbrains-junie-eap/gpt-5.6-luna 'Reply with exactly: Hello'
+opencode run --pure --model jetbrains-junie-eap/claude-fable-5-1 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/claude-opus-4-8 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/gemini-3.5-flash-lite 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/gemini-3.6-flash 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/gemini-3.7-flash 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/gemini-early-exp 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/grok-4.6 'Reply with exactly: Hello'
+opencode run --pure --model jetbrains-junie-eap/jetbrains-mix 'Reply with exactly: Hello'
 ```
 
 ### DeepSeek V4 Flash SSE EOF fix

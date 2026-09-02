@@ -32,7 +32,7 @@ integration, and source-code data flow.
 
 ## JetBrains Junie LLM Gateway
 
-*Created: 2026-07-15 (Updated: 2026-08-14)*
+*Created: 2026-07-15 (Updated: 2026-09-02)*
 
 Direct Curl and OpenCode integration for the Junie gateway, covering both EAP (free test tokens) and Pro (JetBrains AI credits) licensing modes. Supports OpenAI, Anthropic, Gemini, Grok, and Qwen request formats.
 
