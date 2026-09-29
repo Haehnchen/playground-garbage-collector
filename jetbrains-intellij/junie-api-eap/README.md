@@ -1,6 +1,6 @@
 # JetBrains Junie LLM Gateway
 
-*Created: 2026-07-15 (Updated: 2026-09-24)*
+*Created: 2026-07-15 (Updated: 2026-09-29)*
 
 The JetBrains Junie gateway (`ingrazzio-cloud-prod.labs.jb.gg`) serves LLM requests for Junie and the JetBrains AI Assistant. It supports two licensing modes controlled by request headers — **EAP** (free test tokens) and **Pro** (paid AI Assistant credits). The gateway can be called directly with Curl or configured as an OpenCode provider without starting the Junie CLI.
 
@@ -79,7 +79,7 @@ curl --fail-with-body --silent --show-error \
   -H 'X-Accept-EAP-License: true' \
   -H 'X-Accept-Release-License: false' \
   --data-binary '{
-    "model": "gpt-6-sol",
+    "model": "gpt-6.1-sol",
     "input": "Reply with exactly: Hello",
     "stream": false
   }'
@@ -556,6 +556,24 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
             "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
           }
         },
+        "claude-sonnet-5-5": {
+          "name": "Claude Sonnet 5.5",
+          "family": "claude-sonnet",
+          "reasoning": true,
+          "temperature": false,
+          "tool_call": true,
+          "cost": {
+            "input": 2,
+            "output": 10
+          },
+          "headers": {
+            "X-LLM-Model": "anthropic"
+          },
+          "provider": {
+            "npm": "@ai-sdk/anthropic",
+            "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
+          }
+        },
         "gpt-5.3-codex": {
           "name": "GPT-5.3 Codex",
           "family": "gpt",
@@ -719,6 +737,29 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
             "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
           }
         },
+        "gpt-6.1-sol": {
+          "name": "GPT-6.1 Sol",
+          "family": "gpt",
+          "reasoning": true,
+          "temperature": false,
+          "tool_call": true,
+          "limit": {
+            "context": 1050000,
+            "output": 128000
+          },
+          "cost": {
+            "input": 2,
+            "output": 10,
+            "cache_read": 0.10
+          },
+          "headers": {
+            "X-LLM-Model": "openai"
+          },
+          "provider": {
+            "npm": "@ai-sdk/openai",
+            "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
+          }
+        },
         "grok-4.3": {
           "name": "Grok 4.3",
           "family": "grok",
@@ -870,8 +911,10 @@ List and test:
 opencode models jetbrains-junie-eap
 
 opencode run --pure --model jetbrains-junie-eap/gpt-6-luna 'Reply with exactly: Hello'
+opencode run --pure --model jetbrains-junie-eap/gpt-6.1-sol 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/claude-fable-5-1 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/claude-opus-5-5 'Reply with exactly: Hello'
+opencode run --pure --model jetbrains-junie-eap/claude-sonnet-5-5 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/gemini-3.7-flash 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/gemini-early-exp 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/grok-4.7 'Reply with exactly: Hello'
