@@ -1,6 +1,6 @@
 # JetBrains Junie LLM Gateway
 
-*Created: 2026-07-15 (Updated: 2026-09-29)*
+*Created: 2026-07-15 (Updated: 2026-10-06)*
 
 The JetBrains Junie gateway (`ingrazzio-cloud-prod.labs.jb.gg`) serves LLM requests for Junie and the JetBrains AI Assistant. It supports two licensing modes controlled by request headers — **EAP** (free test tokens) and **Pro** (paid AI Assistant credits). The gateway can be called directly with Curl or configured as an OpenCode provider without starting the Junie CLI.
 
@@ -51,6 +51,7 @@ Successful EAP responses include `x-response-origin: EAP_INGRAZZIO`.
 | Gemini | `/v1beta1/projects/jetbrains-grazie/locations/global/publishers/google/models/{model}:generateContent` | Gemini GenerateContent | `google` |
 | Grok | `/v1/responses` | OpenAI Responses | `grok` |
 | Qwen Flash | `/v1/chat/completions` | OpenAI Chat Completions | `internal-lite-llm` |
+| Junie Lite | `/llm/vllm/v1/chat/completions` | OpenAI Chat Completions | `jbai` |
 | JetBrains Mix | `/llm/vllm/v1/chat/completions` | OpenAI Chat Completions | `jbai` |
 
 Required common headers (EAP mode shown, see [Licensing Modes](#licensing-modes) for Pro):
@@ -180,6 +181,33 @@ curl --fail-with-body --silent --show-error \
   }'
 ```
 
+### Junie Lite
+
+Use model **`Qwen/Qwen3.6-27B-FP8`** with the `X-LLM-Model: jbai` header for Junie Lite.
+
+```bash
+curl --fail-with-body --silent --show-error \
+  'https://ingrazzio-cloud-prod.labs.jb.gg/llm/vllm/v1/chat/completions' \
+  -H 'Authorization: Bearer YOUR_JUNIE_EAP_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept-Encoding: identity' \
+  -H 'X-LLM-Model: jbai' \
+  -H 'X-Keep-Path: true' \
+  -H 'X-Accept-EAP-License: true' \
+  -H 'X-Accept-Release-License: false' \
+  --data-binary '{
+    "model": "Qwen/Qwen3.6-27B-FP8",
+    "messages": [{"role": "user", "content": "Reply with exactly: Hello"}],
+    "max_tokens": 64,
+    "chat_template_kwargs": {"enable_thinking": false},
+    "stream": false
+  }'
+```
+
+For SSE, set `"stream": true` and `"stream_options": {"include_usage": true}`. Optionally, set `chat_template_kwargs.enable_thinking` to `false` for responses without thinking.
+
+The CLI's separate Free mode sets `X-Forced-License-Free: true`, `X-Accept-EAP-License: false`, and `X-Accept-Release-License: false`.
+
 ### Pro mode (AI credits)
 
 To use a JetBrains AI Assistant Pro subscription instead of EAP, change only the auth header and the two license headers. All other headers, the endpoint, and the body stay identical:
@@ -223,6 +251,8 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
 
 **DeepSeek V4 Flash:** add `options.sse_eof_fix: true` to the model configuration and install the global plugin from the [SSE EOF fix section](#deepseek-v4-flash-sse-eof-fix) below. This keeps the existing OpenAI-compatible provider and fixes the Junie stream termination for this model.
 
+**Junie Lite:** provider-level `options.includeUsage: true` makes the OpenAI-compatible SDK send the required streaming usage option ([AI SDK documentation](https://ai-sdk.dev/providers/openai-compatible-providers)). The model key `junie-lite` is a local OpenCode alias; its `id` sets the actual API model name. Keep the EAP license headers shown below.
+
 ```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
@@ -230,6 +260,7 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
     "jetbrains-junie-eap": {
       "name": "Junie EAP",
       "options": {
+        "includeUsage": true,
         "apiKey": "unused-by-junie-gateway",
         "headers": {
           "Authorization": "Bearer YOUR_JUNIE_EAP_TOKEN",
@@ -860,6 +891,21 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
             "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
           }
         },
+        "junie-lite": {
+          "id": "Qwen/Qwen3.6-27B-FP8",
+          "name": "Junie Lite",
+          "family": "qwen",
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "headers": {
+            "X-LLM-Model": "jbai"
+          },
+          "provider": {
+            "npm": "@ai-sdk/openai-compatible",
+            "api": "https://ingrazzio-cloud-prod.labs.jb.gg/llm/vllm/v1"
+          }
+        },
         "jetbrains-mix": {
           "name": "JetBrains Mix",
           "family": "jetbrains",
@@ -919,6 +965,7 @@ opencode run --pure --model jetbrains-junie-eap/gemini-3.7-flash 'Reply with exa
 opencode run --pure --model jetbrains-junie-eap/gemini-early-exp 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/grok-4.7 'Reply with exactly: Hello'
 opencode run --pure --model jetbrains-junie-eap/jetbrains-mix 'Reply with exactly: Hello'
+opencode run --pure --model jetbrains-junie-eap/junie-lite 'Reply with exactly: Hello'
 ```
 
 ### DeepSeek V4 Flash SSE EOF fix
@@ -1049,6 +1096,7 @@ For JetBrains AI Assistant Pro, copy the provider above and change only the head
     "jetbrains-junie-pro": {
       "name": "Junie Pro",
       "options": {
+        "includeUsage": true,
         "apiKey": "unused-by-junie-gateway",
         "headers": {
           "Authorization": "Bearer YOUR_JETBRAINS_AI_TOKEN",
