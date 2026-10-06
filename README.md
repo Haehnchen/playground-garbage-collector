@@ -4,6 +4,14 @@ A collection of experimental projects and technical concept explorations.
 
 ---
 
+## Morpheus Session Batch Claim Contract
+
+*Created: 2026-10-06 (Updated: 2026-10-06)*
+
+A delegated Solidity helper for [Morpheus](https://active.mor.org/), a decentralized AI network on Base. Claims rewards for up to 100 sessions in one transaction.
+
+**→ [Read more](./crypto/morpheus-claim-contract/README.md)**
+
 ## Hetzner Inference API in OpenCode
 
 *Created: 2026-08-11*
