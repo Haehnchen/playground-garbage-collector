@@ -1,6 +1,6 @@
 # JetBrains Junie LLM Gateway
 
-*Created: 2026-07-15 (Updated: 2026-10-06)*
+*Created: 2026-07-15 (Updated: 2026-10-12)*
 
 The JetBrains Junie gateway (`ingrazzio-cloud-prod.labs.jb.gg`) serves LLM requests for Junie and the JetBrains AI Assistant. It supports two licensing modes controlled by request headers — **EAP** (free test tokens) and **Pro** (paid AI Assistant credits). The gateway can be called directly with Curl or configured as an OpenCode provider without starting the Junie CLI.
 
@@ -241,13 +241,13 @@ Key differences from EAP:
 
 The same substitution applies to every curl example above — swap the token, drop `X-Accept-EAP-License`, flip `X-Accept-Release-License` to `true`.
 
-## OpenCode
+## OpenCode 2
 
 Merge the provider below into `~/.config/opencode/opencode.jsonc` and replace `YOUR_JUNIE_EAP_TOKEN`.
 
 Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Google use provider-specific key headers instead of the required `Authorization: Bearer` header. Without a plugin, the token must therefore be configured directly in `Authorization`.
 
-`apiKey` is a fixed SDK initialization value. Authentication uses the `Authorization` header.
+Set `apiKey` to your Junie token without the `Bearer ` prefix. Also set `Authorization` to `Bearer <token>` for Anthropic and Google.
 
 **DeepSeek V4 Flash:** add `options.sse_eof_fix: true` to the model configuration and install the global plugin from the [SSE EOF fix section](#deepseek-v4-flash-sse-eof-fix) below. This keeps the existing OpenAI-compatible provider and fixes the Junie stream termination for this model.
 
@@ -261,7 +261,7 @@ Standard OpenCode auth works for OpenAI, Grok, and Qwen, but Anthropic and Googl
       "name": "Junie EAP",
       "options": {
         "includeUsage": true,
-        "apiKey": "unused-by-junie-gateway",
+        "apiKey": "YOUR_JUNIE_EAP_TOKEN",
         "headers": {
           "Authorization": "Bearer YOUR_JUNIE_EAP_TOKEN",
           "X-Keep-Path": "true",
@@ -956,16 +956,16 @@ List and test:
 ```bash
 opencode models jetbrains-junie-eap
 
-opencode run --pure --model jetbrains-junie-eap/gpt-6-luna 'Reply with exactly: Hello'
-opencode run --pure --model jetbrains-junie-eap/gpt-6.1-sol 'Reply with exactly: Hello'
-opencode run --pure --model jetbrains-junie-eap/claude-fable-5-1 'Reply with exactly: Hello'
-opencode run --pure --model jetbrains-junie-eap/claude-opus-5-5 'Reply with exactly: Hello'
-opencode run --pure --model jetbrains-junie-eap/claude-sonnet-5-5 'Reply with exactly: Hello'
-opencode run --pure --model jetbrains-junie-eap/gemini-3.7-flash 'Reply with exactly: Hello'
-opencode run --pure --model jetbrains-junie-eap/gemini-early-exp 'Reply with exactly: Hello'
-opencode run --pure --model jetbrains-junie-eap/grok-4.7 'Reply with exactly: Hello'
-opencode run --pure --model jetbrains-junie-eap/jetbrains-mix 'Reply with exactly: Hello'
-opencode run --pure --model jetbrains-junie-eap/junie-lite 'Reply with exactly: Hello'
+opencode run --standalone --model jetbrains-junie-eap/gpt-6-luna 'Reply with exactly: Hello'
+opencode run --standalone --model jetbrains-junie-eap/gpt-6.1-sol 'Reply with exactly: Hello'
+opencode run --standalone --model jetbrains-junie-eap/claude-fable-5-1 'Reply with exactly: Hello'
+opencode run --standalone --model jetbrains-junie-eap/claude-opus-5-5 'Reply with exactly: Hello'
+opencode run --standalone --model jetbrains-junie-eap/claude-sonnet-5-5 'Reply with exactly: Hello'
+opencode run --standalone --model jetbrains-junie-eap/gemini-3.7-flash 'Reply with exactly: Hello'
+opencode run --standalone --model jetbrains-junie-eap/gemini-early-exp 'Reply with exactly: Hello'
+opencode run --standalone --model jetbrains-junie-eap/grok-4.7 'Reply with exactly: Hello'
+opencode run --standalone --model jetbrains-junie-eap/jetbrains-mix 'Reply with exactly: Hello'
+opencode run --standalone --model jetbrains-junie-eap/junie-lite 'Reply with exactly: Hello'
 ```
 
 ### DeepSeek V4 Flash SSE EOF fix
@@ -1058,7 +1058,7 @@ function createEofFixFetch(modelIds, originalFetch = fetch) {
   };
 }
 
-export const JuniePlainHttpPlugin = async () => ({
+const JuniePlainHttpPlugin = async () => ({
   async config(config) {
     for (const provider of Object.values(config.provider ?? {})) {
       const modelIds = Object.entries(provider?.models ?? {})
@@ -1077,17 +1077,44 @@ export const JuniePlainHttpPlugin = async () => ({
     }
   },
 });
+
+async function needsEofFix(ctx, ref) {
+  const result = await ctx.model.list();
+  const model = result.data.find((item) =>
+    item.providerID === ref.providerID && item.id === ref.id);
+  return model?.settings?.[EOF_FIX_FLAG] === true;
+}
+
+export default {
+  id: "junie-plain-http",
+  async setup(ctx) {
+    await ctx.session.hook("http.response", async (event) => {
+      if (!event.response.ok ||
+          !event.response.headers.get("content-type")?.includes("text/event-stream")) return;
+      if (await needsEofFix(ctx, event.model)) {
+        event.response = tolerateEofAfterDone(event.response);
+      }
+    });
+
+    await ctx.session.hook("retry", async (event) => {
+      if (event.error.status !== 429 || !await needsEofFix(ctx, event.model)) return;
+      const delay = RATE_LIMIT_DELAYS[event.attempt - 1];
+      event.decision = delay === undefined ? { retry: false } : { retry: true, delay };
+    });
+  },
+  server: JuniePlainHttpPlugin,
+};
 ```
 
 Test:
 
 ```bash
-opencode run --model jetbrains-junie-eap/deepseek-v4-flash 'Reply with exactly: Hello'
+opencode run --standalone --model jetbrains-junie-eap/deepseek-v4-flash 'Reply with exactly: Hello'
 ```
 
 ### OpenCode Pro mode
 
-For JetBrains AI Assistant Pro, copy the provider above and change only the headers block — rename the provider key if you want to keep both side by side:
+For JetBrains AI Assistant Pro, copy the provider above, set `apiKey` to the Pro token, and change the headers block — rename the provider key if you want to keep both side by side:
 
 ```jsonc
 {
@@ -1097,7 +1124,7 @@ For JetBrains AI Assistant Pro, copy the provider above and change only the head
       "name": "Junie Pro",
       "options": {
         "includeUsage": true,
-        "apiKey": "unused-by-junie-gateway",
+        "apiKey": "YOUR_JETBRAINS_AI_TOKEN",
         "headers": {
           "Authorization": "Bearer YOUR_JETBRAINS_AI_TOKEN",
           "X-Keep-Path": "true",
