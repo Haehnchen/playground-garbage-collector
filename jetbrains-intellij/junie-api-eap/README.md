@@ -1,6 +1,6 @@
 # JetBrains Junie LLM Gateway
 
-*Created: 2026-07-15 (Updated: 2026-10-12)*
+*Created: 2026-07-15 (Updated: 2026-10-13)*
 
 The JetBrains Junie gateway (`ingrazzio-cloud-prod.labs.jb.gg`) serves LLM requests for Junie and the JetBrains AI Assistant. It supports two licensing modes controlled by request headers — **EAP** (free test tokens) and **Pro** (paid AI Assistant credits). The gateway can be called directly with Curl or configured as an OpenCode provider without starting the Junie CLI.
 
@@ -252,6 +252,8 @@ Set `apiKey` to your Junie token without the `Bearer ` prefix. Also set `Authori
 **DeepSeek V4 Flash:** add `options.sse_eof_fix: true` to the model configuration and install the global plugin from the [SSE EOF fix section](#deepseek-v4-flash-sse-eof-fix) below. This keeps the existing OpenAI-compatible provider and fixes the Junie stream termination for this model.
 
 **Junie Lite:** provider-level `options.includeUsage: true` makes the OpenAI-compatible SDK send the required streaming usage option ([AI SDK documentation](https://ai-sdk.dev/providers/openai-compatible-providers)). The model key `junie-lite` is a local OpenCode alias; its `id` sets the actual API model name. Keep the EAP license headers shown below.
+
+**Claude Haiku 5.5:** uses `claude-haiku-5-5` with adaptive thinking and no temperature setting. The cost metadata below uses Anthropic's base rates for prompts up to 100,000 tokens; longer prompts cost $0.50 input / $2.50 output per million tokens ([model documentation](https://platform.claude.com/docs/en/models/haiku-5-5/overview)).
 
 ```jsonc
 {
@@ -581,6 +583,29 @@ Set `apiKey` to your Junie token without the `Bearer ` prefix. Also set `Authori
           },
           "headers": {
             "X-LLM-Model": "anthropic"
+          },
+          "provider": {
+            "npm": "@ai-sdk/anthropic",
+            "api": "https://ingrazzio-cloud-prod.labs.jb.gg/v1"
+          }
+        },
+        "claude-haiku-5-5": {
+          "name": "Claude Haiku 5.5",
+          "family": "claude-haiku",
+          "reasoning": true,
+          "temperature": false,
+          "tool_call": true,
+          "cost": {
+            "input": 0.1,
+            "output": 0.5
+          },
+          "headers": {
+            "X-LLM-Model": "anthropic"
+          },
+          "options": {
+            "thinking": {
+              "type": "adaptive"
+            }
           },
           "provider": {
             "npm": "@ai-sdk/anthropic",
@@ -954,13 +979,14 @@ Set `apiKey` to your Junie token without the `Bearer ` prefix. Also set `Authori
 List and test:
 
 ```bash
-opencode models jetbrains-junie-eap
+opencode models --standalone
 
 opencode run --standalone --model jetbrains-junie-eap/gpt-6-luna 'Reply with exactly: Hello'
 opencode run --standalone --model jetbrains-junie-eap/gpt-6.1-sol 'Reply with exactly: Hello'
 opencode run --standalone --model jetbrains-junie-eap/claude-fable-5-1 'Reply with exactly: Hello'
 opencode run --standalone --model jetbrains-junie-eap/claude-opus-5-5 'Reply with exactly: Hello'
 opencode run --standalone --model jetbrains-junie-eap/claude-sonnet-5-5 'Reply with exactly: Hello'
+opencode run --standalone --model jetbrains-junie-eap/claude-haiku-5-5 'Reply with exactly: Hello'
 opencode run --standalone --model jetbrains-junie-eap/gemini-3.7-flash 'Reply with exactly: Hello'
 opencode run --standalone --model jetbrains-junie-eap/gemini-early-exp 'Reply with exactly: Hello'
 opencode run --standalone --model jetbrains-junie-eap/grok-4.7 'Reply with exactly: Hello'
